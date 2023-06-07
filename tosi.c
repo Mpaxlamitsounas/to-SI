@@ -12,7 +12,7 @@ void calculate(const char *function, const double const argument[2], double *res
 void print_help();
 
 int main(int argc, char **argv) {
-    char function[3] = "", unit[3] = "";
+    char function[16] = "", unit[16] = "";
     double argument[2] = {0}, result;
     int precision = 0;
     
@@ -73,25 +73,25 @@ void calculate(const char *function, const double argument[2], double *result, c
     if      (strcmp("ftin", function) == 0) { // foot inch
         strcpy(unit, "m");
         *result = argument[0] * 0.3048 + argument[1] * 0.0254;
-    } else if (strcmp("ft", function) == 0) {// foot
+    } else if (strcmp("ft", function) == 0) { // foot
         strcpy(unit, "m");
         *result = argument[0] * 0.3048;
-    } else if (strcmp("in", function) == 0) {// inch
+    } else if (strcmp("in", function) == 0) { // inch
         strcpy(unit, "m");
         *result = argument[0] * 0.0254;
-    } else if (strcmp("lb", function) == 0) {// pound mass
+    } else if (strcmp("lb", function) == 0) { // pound mass
         strcpy(unit, "k");
         *result = argument[0] * 0.4535924;
-    } else if (strcmp("oz", function) == 0) {// us customary fluid ounce
+    } else if (strcmp("oz", function) == 0) { // us customary fluid ounce
         strcpy(unit, "L");
         *result = argument[0] * 0.02957344;
-    } else if (strcmp("ozuk", function) == 0) {// imperial fluid ounce
+    } else if (strcmp("ozuk", function) == 0) { // imperial fluid ounce
         strcpy(unit, "L");
         *result = argument[0] * 0.0284131;
-    } else if (strcmp("K", function) == 0) {// kelvin
+    } else if (strcmp("K", function) == 0) { // kelvin
         strcpy(unit, "C");
         *result = argument[0] - 273.15;
-    } else if (strcmp("F", function) == 0) {// fahrenheit
+    } else if (strcmp("F", function) == 0) { // fahrenheit
         strcpy(unit, "C");
         *result = (argument[0] - 32) * 0.5555555555555555802;
     } else {
