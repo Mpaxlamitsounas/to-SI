@@ -70,13 +70,13 @@ int isnum(char *string) {
 }
 
 void calculate(const char *function, const double argument[2], double *result, char *unit) {
-    if      (strcmp("fi", function) == 0) { // foot inch
+    if      (strcmp("ftin", function) == 0) { // foot inch
         strcpy(unit, "m");
         *result = argument[0] * 0.3048 + argument[1] * 0.0254;
-    } else if (strcmp("f", function) == 0) {// foot
+    } else if (strcmp("ft", function) == 0) {// foot
         strcpy(unit, "m");
         *result = argument[0] * 0.3048;
-    } else if (strcmp("i", function) == 0) {// inch
+    } else if (strcmp("in", function) == 0) {// inch
         strcpy(unit, "m");
         *result = argument[0] * 0.0254;
     } else if (strcmp("lb", function) == 0) {// pound mass
@@ -111,9 +111,9 @@ void print_help() {
     printf("%-12s %s\n", "-?", "show help");
     puts("");
     puts("Source units:");
-    printf("%-6s %s\n", "fi",   "Foot+Inch, requires -a option twice");
-    printf("%-6s %s\n", "f",    "Foot");
-    printf("%-6s %s\n", "i",    "Inch");
+    printf("%-6s %s\n", "ftin",   "Foot+Inch, requires -a option twice");
+    printf("%-6s %s\n", "ft",    "Foot");
+    printf("%-6s %s\n", "in",    "Inch");
     printf("%-6s %s\n", "lb",   "Pound mass");
     printf("%-6s %s\n", "oz",   "US customary fluid ounce");
     printf("%-6s %s\n", "ozuk", "Imperial fluid ounce");
