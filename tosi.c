@@ -21,8 +21,10 @@ int main(int argc, char **argv) {
     else
         get_arguments(argc, argv, function, argument, &precision);
 
-    if (strcmp(function, "") == 0)
+    if (strcmp(function, "") == 0) {
+        system("pause");
         exit(1);
+    }
 
     calculate(function, argument, &result, unit);
     
@@ -40,7 +42,7 @@ void get_arguments(int argc, char **argv, char *function, double argument[2], in
     while (((opt = getopt(argc, argv, ":f:a:hp")) != -1)) {
         switch(opt) {
             case 'f':
-                strncpy(function, argv[optind-1], 3); break;
+                strncpy(function, argv[optind-1], 11); break;
 
             case 'a':
                 if (isnum(argv[optind-1]))
@@ -96,6 +98,7 @@ void calculate(const char *function, const double argument[2], double *result, c
         *result = (argument[0] - 32) * 0.5555555555555555802;
     } else {
         printf("Unrecognised function \'%s\'", function);
+        system("pause");
         exit(2);
     }
 }
