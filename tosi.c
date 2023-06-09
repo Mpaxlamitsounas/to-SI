@@ -81,21 +81,31 @@ void calculate(const char *function, const double argument[2], double *result, c
     } else if (strcmp("in", function) == 0) { // inch
         strcpy(unit, "m");
         *result = argument[0] * 0.0254;
+    } else if (strcmp("mi", function) == 0) { // mile
+        strcpy(unit, "m");
+        *result = argument[0] * 1609.344;
+    } else if (strcmp("nmi", function) == 0) { // nautical mile
+        strcpy(unit, "m");
+        *result = argument[0] * 1852;
+
     } else if (strcmp("lb", function) == 0) { // pound mass
-        strcpy(unit, "k");
+        strcpy(unit, "kg");
         *result = argument[0] * 0.4535924;
+
     } else if (strcmp("oz", function) == 0) { // us customary fluid ounce
         strcpy(unit, "L");
         *result = argument[0] * 0.02957344;
     } else if (strcmp("ozuk", function) == 0) { // imperial fluid ounce
         strcpy(unit, "L");
         *result = argument[0] * 0.0284131;
+
     } else if (strcmp("K", function) == 0) { // kelvin
         strcpy(unit, "C");
         *result = argument[0] - 273.15;
     } else if (strcmp("F", function) == 0) { // fahrenheit
         strcpy(unit, "C");
         *result = (argument[0] - 32) * 0.5555555555555555802;
+
     } else {
         printf("Unrecognised function \'%s\'", function);
         system("pause");
@@ -114,9 +124,11 @@ void print_help() {
     printf("%-12s %s\n", "-?", "show help");
     puts("");
     puts("Source units:");
-    printf("%-6s %s\n", "ftin",   "Foot+Inch, requires -a option twice");
-    printf("%-6s %s\n", "ft",    "Foot");
-    printf("%-6s %s\n", "in",    "Inch");
+    printf("%-6s %s\n", "ftin", "Foot+Inch, requires -a option twice");
+    printf("%-6s %s\n", "ft",   "Foot");
+    printf("%-6s %s\n", "in",   "Inch");
+    printf("%-6s %s\n", "mi",   "Mile");
+    printf("%-6s %s\n", "nmi",  "Nautical mile");
     printf("%-6s %s\n", "lb",   "Pound mass");
     printf("%-6s %s\n", "oz",   "US customary fluid ounce");
     printf("%-6s %s\n", "ozuk", "Imperial fluid ounce");
