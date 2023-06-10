@@ -111,6 +111,8 @@ args_t get_arguments(int argc, char **argv) {
 
 int isnum(char *string) {
     char *chr = string;
+    if (*chr == '-')
+        chr++;
     int is_num = 1;
     while (*chr != '\0') {
         is_num = is_num && isdigit(*chr++);
