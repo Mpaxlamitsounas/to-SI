@@ -1,65 +1,112 @@
-#define _CRT_SECURE_NO_WARNINGS
-
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
 #include <stdlib.h>
 #include <getopt.h>
 
+#define UNIT_COUNT 10
+
+typedef struct unit {
+    char function_code[16];
+    double (*transform) (const double[]);
+    char SI_unit[16];
+    char full_name[32];
+    char comment[64];
+} unit_t;
+
+typedef struct args {
+    char function[17];
+    double arguments[4];
+    int precision;
+} args_t;
+
 int isnum(char *string);
-void get_arguments(int argc, char **argv, char *function, double argument[2], int *precision);
-void calculate(const char *function, const double const argument[2], double *result, char *unit);
+args_t get_arguments(int argc, char **argv);
+unit_t get_unit(char *function);
 void print_help();
 
+double ftin(const double arguments[]);
+double ft(const double arguments[]);
+double in(const double arguments[]);
+double mi(const double arguments[]);
+double nmi(const double arguments[]);
+double lb(const double arguments[]);
+double oz(const double arguments[]);
+double ozuk(const double arguments[]);
+double F(const double arguments[]);
+double K(const double arguments[]);
+
+unit_t units[UNIT_COUNT] = {
+        (unit_t) {"ftin", ftin, "m",  "foot+inch",                ", requires -a option twice"},
+        (unit_t) {"ft",   ft,   "m",  "foot",                     ""},
+        (unit_t) {"in",   in,   "m",  "inch",                     ""},
+        (unit_t) {"mi",   mi,   "m",  "mile",                     ""},
+        (unit_t) {"nmi",  nmi,  "m",  "nautical mile",            ""},
+        (unit_t) {"lb",   lb,   "kg", "pound mass",               ""},
+        (unit_t) {"oz",   oz,   "L",  "US customary fluid ounce", ""},
+        (unit_t) {"ozku", ozuk, "L",  "imperial fluid ounce",     ""},
+        (unit_t) {"F",    F,    "C",  "fahrenheit",               ""},
+        (unit_t) {"K",    K,    "C",  "kelvin",                   ""}
+};
+
 int main(int argc, char **argv) {
-    char function[16] = "", unit[16] = "";
-    double argument[2] = {0}, result;
-    int precision = 0;
-    
+
+    args_t args;
     if (argc == 1)
         print_help();
     else
-        get_arguments(argc, argv, function, argument, &precision);
+        args = get_arguments(argc, argv);
 
-    if (strcmp(function, "") == 0) {
+    if (strcmp(args.function, "") == 0) {
+        puts("Missing function option");
         system("pause");
-        exit(1);
+        exit(4);
     }
 
-    calculate(function, argument, &result, unit);
-    
-    if (precision)
-        printf("%lf %s\n", result, unit);
+    unit_t unit = get_unit(args.function);
+
+    if (args.precision)
+        printf("%lf %s\n", unit.transform(args.arguments), unit.SI_unit);
     else
-        printf("%.2lf %s\n", result, unit);
+        printf("%.2lf %s\n", unit.transform(args.arguments), unit.SI_unit);
+
 
     system("pause");
     return 0;
 }
 
-void get_arguments(int argc, char **argv, char *function, double argument[2], int *precision) {
+args_t get_arguments(int argc, char **argv) {
+    static args_t args = {"", 0, 0};
     int opt, arg_cnt = 0;
     while (((opt = getopt(argc, argv, ":f:a:hp")) != -1)) {
         switch(opt) {
             case 'f':
-                strncpy(function, argv[optind-1], 11); break;
+                strncpy_s(args.function, 17, argv[optind-1], 16); break;
 
             case 'a':
+                if (arg_cnt == 2) {
+                    puts("Too many argument options");
+                    system("pause");
+                    exit(3);
+                }
+
                 if (isnum(argv[optind-1]))
-                    argument[arg_cnt++] = atof(argv[optind-1]);
+                    args.arguments[arg_cnt++] = atof(argv[optind-1]);
                 break;
             
             case 'p':
-                *precision = 1; break;
+                args.precision = 1; break;
 
             case 'h':
             case '?':
                 print_help();
 
             case ':':
-                printf("Missing argument after \'%c\'\n", (char) optopt); break;
+                printf("Missing argument after \'%c\'\n", (char) optopt); system("pause"); exit(1);
         }
     }
+    
+    return args;
 }
 
 int isnum(char *string) {
@@ -71,46 +118,54 @@ int isnum(char *string) {
     return is_num;
 }
 
-void calculate(const char *function, const double argument[2], double *result, char *unit) {
-    if      (strcmp("ftin", function) == 0) { // foot inch
-        strcpy(unit, "m");
-        *result = argument[0] * 0.3048 + argument[1] * 0.0254;
-    } else if (strcmp("ft", function) == 0) { // foot
-        strcpy(unit, "m");
-        *result = argument[0] * 0.3048;
-    } else if (strcmp("in", function) == 0) { // inch
-        strcpy(unit, "m");
-        *result = argument[0] * 0.0254;
-    } else if (strcmp("mi", function) == 0) { // mile
-        strcpy(unit, "m");
-        *result = argument[0] * 1609.344;
-    } else if (strcmp("nmi", function) == 0) { // nautical mile
-        strcpy(unit, "m");
-        *result = argument[0] * 1852;
-
-    } else if (strcmp("lb", function) == 0) { // pound mass
-        strcpy(unit, "kg");
-        *result = argument[0] * 0.4535924;
-
-    } else if (strcmp("oz", function) == 0) { // us customary fluid ounce
-        strcpy(unit, "L");
-        *result = argument[0] * 0.02957344;
-    } else if (strcmp("ozuk", function) == 0) { // imperial fluid ounce
-        strcpy(unit, "L");
-        *result = argument[0] * 0.0284131;
-
-    } else if (strcmp("K", function) == 0) { // kelvin
-        strcpy(unit, "C");
-        *result = argument[0] - 273.15;
-    } else if (strcmp("F", function) == 0) { // fahrenheit
-        strcpy(unit, "C");
-        *result = (argument[0] - 32) * 0.5555555555555555802;
-
-    } else {
-        printf("Unrecognised function \'%s\'", function);
-        system("pause");
-        exit(2);
+unit_t get_unit(char *function) {
+    for (size_t i = 0; i < UNIT_COUNT; i++) {
+        if (strcmp(function, units[i].function_code) == 0)
+            return units[i];
     }
+    printf("Unrecognised function \'%s\'\n", function);
+    system("pause");
+    exit(2);
+}
+
+double ftin(const double arguments[]) {
+    return ft(arguments) + in(arguments+1);
+}
+
+double ft(const double arguments[]) {
+    return arguments[0] * 0.3048;
+}
+
+double in(const double arguments[]) {
+    return arguments[0] * 0.0254;
+}
+
+double mi(const double arguments[]) {
+    return arguments[0] * 1609.344;
+}
+
+double nmi(const double arguments[]) {
+    return arguments[0] * 1852;
+}
+
+double lb(const double arguments[]) {
+    return arguments[0] * 0.4535924;
+}
+
+double oz(const double arguments[]) {
+    return arguments[0] * 0.02957344;
+}
+
+double ozuk(const double arguments[]) {
+    return arguments[0] * 0.0284131;
+}
+
+double F(const double arguments[]) {
+    return (arguments[0] - 32) * 0.5555555555555555802;
+}
+
+double K(const double arguments[]) {
+    return arguments[0] - 273.15;
 }
 
 void print_help() {
@@ -124,20 +179,14 @@ void print_help() {
     printf("%-12s %s\n", "-?", "show help");
     puts("");
     puts("Source units:");
-    printf("%-6s %s\n", "ftin", "Foot+Inch, requires -a option twice");
-    printf("%-6s %s\n", "ft",   "Foot");
-    printf("%-6s %s\n", "in",   "Inch");
-    printf("%-6s %s\n", "mi",   "Mile");
-    printf("%-6s %s\n", "nmi",  "Nautical mile");
-    printf("%-6s %s\n", "lb",   "Pound mass");
-    printf("%-6s %s\n", "oz",   "US customary fluid ounce");
-    printf("%-6s %s\n", "ozuk", "Imperial fluid ounce");
-    printf("%-6s %s\n", "K",    "Kelvin");
-    printf("%-6s %s\n", "F",    "Fahrenheit");
+    for (size_t i = 0; i < UNIT_COUNT; i++)
+        printf("%-6s %s%s\n", units[i].function_code, units[i].full_name, units[i].comment);
     puts("");
     puts("Exit codes:");
     printf("%-6s %s\n", "0", "Terminated without errors");
-    printf("%-6s %s\n", "1", "Did not receive function option");
+    printf("%-6s %s\n", "1", "Missing option argument");
     printf("%-6s %s\n", "2", "Function argument invalid");
+    printf("%-6s %s\n", "3", "Too many argument options");
+    printf("%-6s %s\n", "4", "Missing function option");
     exit(0);
 }
