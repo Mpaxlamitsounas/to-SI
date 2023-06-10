@@ -148,5 +148,6 @@ void print_help() {
     printf("%-6s %s\n", "2", "Function argument invalid");
     printf("%-6s %s\n", "3", "Too many argument options");
     printf("%-6s %s\n", "4", "Missing function option");
+    system("pause");
     exit(0);
 }
