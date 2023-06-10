@@ -115,7 +115,8 @@ int isnum(char *string) {
         chr++;
     int is_num = 1;
     while (*chr != '\0') {
-        is_num = is_num && isdigit(*chr++);
+        is_num = is_num && (isdigit(*chr) || *chr == '.');
+        chr++;
     }
     return is_num;
 }
