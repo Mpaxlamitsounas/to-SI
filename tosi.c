@@ -25,16 +25,16 @@ args_t get_arguments(int argc, char **argv);
 unit_t get_unit(char *function);
 void print_help();
 
-double ftin(const double arguments[]);
-double ft(const double arguments[]);
-double in(const double arguments[]);
-double mi(const double arguments[]);
-double nmi(const double arguments[]);
-double lb(const double arguments[]);
-double oz(const double arguments[]);
-double ozuk(const double arguments[]);
-double F(const double arguments[]);
-double K(const double arguments[]);
+double ft(const double arguments[]) { return arguments[0] * 0.3048; }
+double in(const double arguments[]) { return arguments[0] * 0.0254; }
+double ftin(const double arguments[]) { return ft(arguments) + in(arguments+1); }
+double mi(const double arguments[]) { return arguments[0] * 1609.344; }
+double nmi(const double arguments[])  {return arguments[0] * 1852; }
+double lb(const double arguments[]) { return arguments[0] * 0.4535924; }
+double oz(const double arguments[]) { return arguments[0] * 0.02957344; }
+double ozuk(const double arguments[]) { return arguments[0] * 0.0284131; }
+double F(const double arguments[]) {return (arguments[ 0] - 32) * 0.5555555555555555802; }
+double K(const double arguments[]) { return arguments[0] - 273.15; }
 
 unit_t units[UNIT_COUNT] = {
         (unit_t) {"ftin", ftin, "m",  "foot+inch",                ", requires -a option twice"},
@@ -126,46 +126,6 @@ unit_t get_unit(char *function) {
     printf("Unrecognised function \'%s\'\n", function);
     system("pause");
     exit(2);
-}
-
-double ftin(const double arguments[]) {
-    return ft(arguments) + in(arguments+1);
-}
-
-double ft(const double arguments[]) {
-    return arguments[0] * 0.3048;
-}
-
-double in(const double arguments[]) {
-    return arguments[0] * 0.0254;
-}
-
-double mi(const double arguments[]) {
-    return arguments[0] * 1609.344;
-}
-
-double nmi(const double arguments[]) {
-    return arguments[0] * 1852;
-}
-
-double lb(const double arguments[]) {
-    return arguments[0] * 0.4535924;
-}
-
-double oz(const double arguments[]) {
-    return arguments[0] * 0.02957344;
-}
-
-double ozuk(const double arguments[]) {
-    return arguments[0] * 0.0284131;
-}
-
-double F(const double arguments[]) {
-    return (arguments[0] - 32) * 0.5555555555555555802;
-}
-
-double K(const double arguments[]) {
-    return arguments[0] - 273.15;
 }
 
 void print_help() {
