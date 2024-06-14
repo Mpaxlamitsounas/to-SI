@@ -1,7 +1,7 @@
 # to-si
 Command line too for converting from various units to SI.
 
-It's probably insecure, I'm not a pro so can't do much
+Totally insecure, made this just for fun, please use a python library or something.
 
 ## Options:
 ```
